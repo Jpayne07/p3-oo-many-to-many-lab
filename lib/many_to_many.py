@@ -6,20 +6,39 @@ class Author:
         Author.all.append(self)
 
     def contracts(self):
-       pass
+        return [contract for contract in Contract.all if contract.author == self]
+            
 
     def books(self):
-        pass
+        return [contract.book for contract in Contract.all if  contract.author == self]
+            
 
-    def sign_contract(book,date, royalties):
-        pass
-
+    def sign_contract(self, book, date, royalties):
+        contract = Contract(self, book, date, royalties)
+        Contract.all.append(contract)
+        return contract
+    
+    def total_royalties(self):
+        amount_of_royalties = 0
+        for contract in Contract.all:
+            if contract.author == self:
+                amount_of_royalties += contract.royalties
+        return amount_of_royalties
+        
     
 class Book:
     all=[]
     def __init__(self, title = ""):
         self.title = title
         Book.all.append(self)
+
+    def contracts(self):
+        return [contract for contract in Contract.all if contract.book == self]
+            
+    def authors(self):           
+        return [contract.author for contract in Contract.all if contract.book == self]
+
+    
 
 class Contract:
     all = []
@@ -81,10 +100,15 @@ class Contract:
         else:
             raise Exception("The royalties is not of type int")
 
+    @classmethod    
+    def contracts_by_date(cls, date):
+        return [contract for contract in cls.all if contract.date == date]
+
 
 author = Author("Jacob")
 book = Book("Title")
 contract = Contract(author, book, '01/01/2001', 50000)
 
-for author in author.all:
-    print(author.name)
+# for contract in contract.all:
+# print(contract.all[0].author.name)
+print(author.books())
